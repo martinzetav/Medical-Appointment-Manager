@@ -1,7 +1,7 @@
 package com.app.config;
 
 import com.app.config.filter.JwtTokenValidator;
-import com.app.service.UserDetailServiceImpl;
+import com.app.service.impl.UserDetailServiceImpl;
 import com.app.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

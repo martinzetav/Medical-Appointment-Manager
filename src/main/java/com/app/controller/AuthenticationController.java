@@ -3,7 +3,7 @@ package com.app.controller;
 import com.app.dto.AuthLoginRequestDTO;
 import com.app.dto.AuthResponseDTO;
 import com.app.dto.RegisterUserDTO;
-import com.app.service.UserDetailServiceImpl;
+import com.app.service.impl.UserDetailServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
