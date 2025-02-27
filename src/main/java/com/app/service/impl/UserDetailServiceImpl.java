@@ -1,4 +1,4 @@
-package com.app.service;
+package com.app.service.impl;
 
 import com.app.dto.AuthLoginRequestDTO;
 import com.app.dto.AuthResponseDTO;
@@ -7,6 +7,7 @@ import com.app.model.Role;
 import com.app.model.RoleEnum;
 import com.app.model.UserEntity;
 import com.app.repository.IUserRepository;
+import com.app.service.interfaces.IRoleService;
 import com.app.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
