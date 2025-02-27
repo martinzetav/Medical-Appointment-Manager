@@ -24,5 +24,6 @@ public class Appointment {
     private Doctor doctor;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private boolean isReserved;
 
 }
