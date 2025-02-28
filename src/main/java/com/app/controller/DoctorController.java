@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/doctor")
+@RequestMapping("/doctors")
 @RequiredArgsConstructor
 public class DoctorController {
 
