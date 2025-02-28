@@ -1,13 +1,17 @@
 package com.app.service.impl;
 
+import com.app.dto.DoctorAppointmentDTO;
 import com.app.dto.PatientAppointmentDTO;
 import com.app.exception.ResourceNotFoundException;
+import com.app.model.Appointment;
 import com.app.model.Patient;
+import com.app.repository.IAppointmentRepository;
 import com.app.repository.IPatientRepository;
 import com.app.service.interfaces.IPatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 public class PatientService implements IPatientService {
 
     private final IPatientRepository patientRepository;
+    private final IAppointmentRepository appointmentRepository;
 
     @Override
     public Patient save(Patient patient) {
@@ -68,12 +73,13 @@ public class PatientService implements IPatientService {
     public Set<PatientAppointmentDTO> findAppointmentsByPatientId(Long id) throws ResourceNotFoundException {
         Optional<Patient> patient = patientRepository.findById(id);
         if(patient.isPresent()){
-            return patient.get().getAppointments().stream()
+            Set<Appointment> appointments = appointmentRepository.findByPatientId(id);
+            return appointments.stream()
                     .map(appointment -> PatientAppointmentDTO.builder()
                             .appointmentId(appointment.getId())
                             .startDate(appointment.getStartDate())
                             .endDate(appointment.getEndDate())
-                            .doctorFullname(appointment.getDoctor().getName() + " " + appointment.getDoctor().getLastName())
+                            .doctorFullName(appointment.getDoctor().getName() + " " + appointment.getDoctor().getLastName())
                             .doctorSpecialty(appointment.getDoctor().getSpecialty())
                             .build()
                     )
