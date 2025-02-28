@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/patient")
 @RequiredArgsConstructor
-public class PatientControlller {
+public class PatientController {
 
     private final IPatientService patientService;
 
