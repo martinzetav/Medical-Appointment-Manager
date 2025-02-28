@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import com.app.dto.DoctorAppointmentDTO;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Doctor;
 import com.app.service.interfaces.IDoctorService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/doctors")
@@ -57,4 +59,8 @@ public class DoctorController {
         return ResponseEntity.ok("Doctor with id " + id + " successfully removed.");
     }
 
+    @GetMapping("/{id}/appointments")
+    public ResponseEntity<Set<DoctorAppointmentDTO>> findAppointmentsByDoctorId(@PathVariable Long id) throws ResourceNotFoundException {
+        return ResponseEntity.ok(doctorService.findAppointmentsByDoctorId(id));
+    }
 }
