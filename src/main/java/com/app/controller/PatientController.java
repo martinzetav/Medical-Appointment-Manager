@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.dto.PatientAppointmentDTO;
+import com.app.dto.PatientDTO;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Patient;
 import com.app.service.interfaces.IPatientService;
@@ -20,14 +21,14 @@ public class PatientController {
     private final IPatientService patientService;
 
     @GetMapping
-    public ResponseEntity<List<Patient>> findAll(){
+    public ResponseEntity<List<PatientDTO>> findAll(){
         return ResponseEntity.ok(patientService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> findById(@PathVariable Long id) throws ResourceNotFoundException {
-        Optional<Patient> requiredPatient = patientService.findById(id);
-        ResponseEntity<Patient> response;
+    public ResponseEntity<PatientDTO> findById(@PathVariable Long id) throws ResourceNotFoundException {
+        Optional<PatientDTO> requiredPatient = patientService.findById(id);
+        ResponseEntity<PatientDTO> response;
         if(requiredPatient.isPresent()){
             response = ResponseEntity.ok(requiredPatient.get());
         } else {
@@ -37,14 +38,14 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Patient> save(@RequestBody Patient patient){
+    public ResponseEntity<PatientDTO> save(@RequestBody Patient patient){
         return ResponseEntity.ok(patientService.save(patient));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> update(@PathVariable Long id, @RequestBody Patient patient) throws ResourceNotFoundException {
-        Optional<Patient> patientToLookFor = patientService.findById(id);
-        ResponseEntity<Patient> response;
+    public ResponseEntity<PatientDTO> update(@PathVariable Long id, @RequestBody Patient patient) throws ResourceNotFoundException {
+        Optional<PatientDTO> patientToLookFor = patientService.findById(id);
+        ResponseEntity<PatientDTO> response;
         if(patientToLookFor.isPresent()){
             response = ResponseEntity.ok(patientService.update(id, patient));
         } else {

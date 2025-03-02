@@ -1,7 +1,7 @@
 package com.app.service.impl;
 
-import com.app.dto.DoctorAppointmentDTO;
 import com.app.dto.PatientAppointmentDTO;
+import com.app.dto.PatientDTO;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Patient;
@@ -11,7 +11,6 @@ import com.app.service.interfaces.IPatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,27 +24,32 @@ public class PatientService implements IPatientService {
     private final IAppointmentRepository appointmentRepository;
 
     @Override
-    public Patient save(Patient patient) {
-        return patientRepository.save(patient);
+    public PatientDTO save(Patient patient) {
+        patientRepository.save(patient);
+        return this.convertToPatientDTO(patient);
     }
 
     @Override
-    public List<Patient> findAll() {
-        return patientRepository.findAll();
+    public List<PatientDTO> findAll() {
+        List<Patient> patients = patientRepository.findAll();
+        return patients.stream()
+                .map(this::convertToPatientDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Patient> findById(Long id) throws ResourceNotFoundException {
+    public Optional<PatientDTO> findById(Long id) throws ResourceNotFoundException {
         Optional<Patient> patient = patientRepository.findById(id);
         if(patient.isPresent()){
-            return patient;
+            PatientDTO patientDTO = this.convertToPatientDTO(patient.get());
+            return Optional.of(patientDTO);
         } else {
             throw new ResourceNotFoundException("Patient with id " + id + " not found");
         }
     }
 
     @Override
-    public Patient update(Long id, Patient patient) throws ResourceNotFoundException {
+    public PatientDTO update(Long id, Patient patient) throws ResourceNotFoundException {
         Optional<Patient> patientWanted = patientRepository.findById(id);
         if(patientWanted.isPresent()){
             Patient updatedPatient = patientWanted.get();
@@ -55,7 +59,11 @@ public class PatientService implements IPatientService {
             updatedPatient.setAddress(patient.getAddress());
             updatedPatient.setAppointments(patient.getAppointments());
 
-            return this.save(updatedPatient);
+            patientRepository.save(updatedPatient);
+
+            PatientDTO patientDTO = this.convertToPatientDTO(updatedPatient);
+
+            return patientDTO;
         } else {
             throw new ResourceNotFoundException("Patient with id " + id + " not found");
         }
@@ -63,7 +71,7 @@ public class PatientService implements IPatientService {
 
     @Override
     public void delete(Long id) throws ResourceNotFoundException {
-        Patient patient = this.findById(id)
+        Patient patient = patientRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Patient with id " + id + " not found"));
 
         patientRepository.deleteById(patient.getId());
@@ -79,7 +87,8 @@ public class PatientService implements IPatientService {
                             .appointmentId(appointment.getId())
                             .startDate(appointment.getStartDate())
                             .endDate(appointment.getEndDate())
-                            .doctorFullName(appointment.getDoctor().getName() + " " + appointment.getDoctor().getLastName())
+                            .doctorName(appointment.getDoctor().getName())
+                            .doctorLastName(appointment.getDoctor().getLastName())
                             .doctorSpecialty(appointment.getDoctor().getSpecialty())
                             .build()
                     )
@@ -87,5 +96,25 @@ public class PatientService implements IPatientService {
         } else {
             throw new ResourceNotFoundException("Patient with id " + id + " not found");
         }
+    }
+
+    private PatientDTO convertToPatientDTO(Patient patient){
+        return PatientDTO.builder()
+                .id(patient.getId())
+                .name(patient.getName())
+                .lastName(patient.getLastName())
+                .contact(patient.getContact())
+                .address(patient.getAddress())
+                .appointments(patient.getAppointments().stream()
+                        .map(appointment -> PatientAppointmentDTO.builder()
+                                .appointmentId(appointment.getId())
+                                .startDate(appointment.getStartDate())
+                                .endDate(appointment.getEndDate())
+                                .doctorName(appointment.getDoctor().getName())
+                                .doctorLastName(appointment.getDoctor().getLastName())
+                                .doctorSpecialty(appointment.getDoctor().getSpecialty())
+                                .build())
+                        .collect(Collectors.toSet()))
+                .build();
     }
 }
