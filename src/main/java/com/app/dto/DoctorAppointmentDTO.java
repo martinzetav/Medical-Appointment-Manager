@@ -15,5 +15,6 @@ public class DoctorAppointmentDTO {
     private LocalDateTime endDate;
     private String patientName;
     private String patientLastName;
+    private String patientDni;
     private String patientEmail;
 }

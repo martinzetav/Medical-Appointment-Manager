@@ -15,6 +15,7 @@ public class PatientDTO {
     private Long id;
     private String name;
     private String lastName;
+    private String dni;
     private Contact contact;
     private Address address;
     private Set<PatientAppointmentDTO> appointments;
