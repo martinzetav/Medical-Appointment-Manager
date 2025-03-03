@@ -1,6 +1,7 @@
 package com.app.service.interfaces;
 
 import com.app.dto.AppointmentDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IAppointmentService {
-    AppointmentDTO save(Appointment appointment) throws ResourceNotFoundException;
+    AppointmentDTO save(Appointment appointment) throws ResourceNotFoundException, DuplicateResourceException;
     List<AppointmentDTO> findAll();
     Optional<AppointmentDTO> findById(Long id) throws ResourceNotFoundException;
     AppointmentDTO update(Long id, Appointment appointment) throws ResourceNotFoundException;

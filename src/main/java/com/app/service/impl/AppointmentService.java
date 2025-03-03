@@ -3,6 +3,7 @@ package com.app.service.impl;
 import com.app.dto.AppointmentDTO;
 import com.app.dto.DoctorDTO;
 import com.app.dto.PatientDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Doctor;
@@ -27,7 +28,7 @@ public class AppointmentService implements IAppointmentService {
     private final IDoctorService doctorService;
 
     @Override
-    public AppointmentDTO save(Appointment appointment) throws ResourceNotFoundException {
+    public AppointmentDTO save(Appointment appointment) throws ResourceNotFoundException, DuplicateResourceException {
         Optional<PatientDTO> patientDTO = patientService.findById(appointment.getPatient().getId());
         Optional<DoctorDTO> doctorDTO = doctorService.findById(appointment.getDoctor().getId());
         if(patientDTO.isPresent() && doctorDTO.isPresent()){
@@ -40,6 +41,15 @@ public class AppointmentService implements IAppointmentService {
             doctor.setId(doctorDTO.get().getId());
             doctor.setName(doctorDTO.get().getName());
             doctor.setLastName(doctorDTO.get().getLastName());
+
+            List<Appointment> conflictingAppointments = appointmentRepository.findByDoctorAndStartDateBetween(
+                    appointment.getDoctor(),
+                    appointment.getStartDate(),
+                    appointment.getEndDate()
+            );
+            if(!conflictingAppointments.isEmpty()){
+                throw new DuplicateResourceException("There is already an appointment for this doctor at the given time.");
+            }
 
             appointment.setPatient(patient);
             appointment.setDoctor(doctor);
