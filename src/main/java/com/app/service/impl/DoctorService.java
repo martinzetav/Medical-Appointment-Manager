@@ -11,7 +11,6 @@ import com.app.service.interfaces.IDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -90,6 +89,7 @@ public class DoctorService implements IDoctorService {
                                 .endDate(appointment.getEndDate())
                                 .patientName(appointment.getPatient().getName())
                                 .patientLastName(appointment.getPatient().getLastName())
+                                .patientDni(appointment.getPatient().getDni())
                                 .patientEmail(appointment.getPatient().getContact().getEmail())
                                 .build()
                         )
