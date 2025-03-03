@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import com.app.dto.AppointmentDTO;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.service.interfaces.IAppointmentService;
@@ -18,13 +19,13 @@ public class AppointmentController {
     private final IAppointmentService appointmentService;
 
     @GetMapping
-    public ResponseEntity<List<Appointment>> findAll(){
+    public ResponseEntity<List<AppointmentDTO>> findAll(){
         return ResponseEntity.ok(appointmentService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Appointment> findById(@PathVariable Long id) throws ResourceNotFoundException {
-        Optional<Appointment> appointment = appointmentService.findById(id);
+    public ResponseEntity<AppointmentDTO> findById(@PathVariable Long id) throws ResourceNotFoundException {
+        Optional<AppointmentDTO> appointment = appointmentService.findById(id);
         ResponseEntity response;
         if(appointment.isPresent()){
             response = ResponseEntity.ok(appointment.get());
@@ -35,13 +36,13 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Appointment> save(@RequestBody Appointment appointment){
+    public ResponseEntity<AppointmentDTO> save(@RequestBody Appointment appointment) throws ResourceNotFoundException {
         return ResponseEntity.ok(appointmentService.save(appointment));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Appointment> update(@PathVariable Long id, @RequestBody Appointment appointment) throws ResourceNotFoundException {
-        Optional<Appointment> requiredAppointment = appointmentService.findById(id);
+    public ResponseEntity<AppointmentDTO> update(@PathVariable Long id, @RequestBody Appointment appointment) throws ResourceNotFoundException {
+        Optional<AppointmentDTO> requiredAppointment = appointmentService.findById(id);
         ResponseEntity response;
         if(requiredAppointment.isPresent()){
             response = ResponseEntity.ok(appointmentService.update(id, appointment));
