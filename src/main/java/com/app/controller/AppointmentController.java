@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.dto.AppointmentDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.service.interfaces.IAppointmentService;
@@ -36,7 +37,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<AppointmentDTO> save(@RequestBody Appointment appointment) throws ResourceNotFoundException {
+    public ResponseEntity<AppointmentDTO> save(@RequestBody Appointment appointment) throws ResourceNotFoundException, DuplicateResourceException {
         return ResponseEntity.ok(appointmentService.save(appointment));
     }
 

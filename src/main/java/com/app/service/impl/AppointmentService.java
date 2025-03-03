@@ -42,6 +42,8 @@ public class AppointmentService implements IAppointmentService {
             doctor.setName(doctorDTO.get().getName());
             doctor.setLastName(doctorDTO.get().getLastName());
 
+            appointment.setEndDate(appointment.getStartDate().plusMinutes(30));
+
             List<Appointment> conflictingAppointments = appointmentRepository.findByDoctorAndStartDateBetween(
                     appointment.getDoctor(),
                     appointment.getStartDate(),
