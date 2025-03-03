@@ -16,4 +16,5 @@ public interface IDoctorService {
     DoctorDTO update(Long id, Doctor doctor) throws ResourceNotFoundException;
     void delete(Long id) throws ResourceNotFoundException;
     Set<DoctorAppointmentDTO> findAppointmentsByDoctorId(Long id) throws ResourceNotFoundException;
+    List<DoctorDTO> findDoctorBySpecialty(String specialty);
 }

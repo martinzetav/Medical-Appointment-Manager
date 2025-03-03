@@ -100,6 +100,14 @@ public class DoctorService implements IDoctorService {
         }
     }
 
+    @Override
+    public List<DoctorDTO> findDoctorBySpecialty(String specialty) {
+        List<Doctor> doctors = doctorRepository.findDoctorBySpecialty(specialty);
+        return doctors.stream()
+                .map(this::convertToDoctorDTO)
+                .collect(Collectors.toList());
+    }
+
     private DoctorDTO convertToDoctorDTO(Doctor doctor){
         return DoctorDTO.builder()
                 .id(doctor.getId())

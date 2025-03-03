@@ -64,4 +64,9 @@ public class DoctorController {
     public ResponseEntity<Set<DoctorAppointmentDTO>> findAppointmentsByDoctorId(@PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(doctorService.findAppointmentsByDoctorId(id));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<DoctorDTO>> findDoctorBySpecialty(@RequestParam String specialty){
+        return ResponseEntity.ok(doctorService.findDoctorBySpecialty(specialty));
+    }
 }
