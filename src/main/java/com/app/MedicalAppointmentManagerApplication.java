@@ -50,12 +50,22 @@ public class MedicalAppointmentManagerApplication {
 					.permissionList(Set.of(createPermission, readPermission, updatePermission, deletePermission))
 					.build();
 
+			Role roleSecretary = Role.builder()
+					.roleEnum(RoleEnum.SECRETARY)
+					.permissionList(Set.of(createPermission, readPermission, updatePermission))
+					.build();
+
+			Role roleDoctor = Role.builder()
+					.roleEnum(RoleEnum.DOCTOR)
+					.permissionList(Set.of(readPermission, updatePermission))
+					.build();
+
 			Role roleUser = Role.builder()
 					.roleEnum(RoleEnum.USER)
 					.permissionList(Set.of(createPermission, readPermission))
 					.build();
 
-			roleRepository.saveAll(List.of(roleAdmin, roleUser));
+			roleRepository.saveAll(List.of(roleAdmin, roleSecretary, roleDoctor, roleUser));
 
 
 //			/* CREATE USERS */
