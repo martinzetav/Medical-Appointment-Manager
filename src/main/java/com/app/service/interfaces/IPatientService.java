@@ -2,6 +2,7 @@ package com.app.service.interfaces;
 
 import com.app.dto.PatientAppointmentDTO;
 import com.app.dto.PatientDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Patient;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface IPatientService {
-    PatientDTO save(Patient patient);
+    PatientDTO save(Patient patient) throws DuplicateResourceException;
     List<PatientDTO> findAll();
     Optional<PatientDTO> findById(Long id) throws ResourceNotFoundException;
     PatientDTO update(Long id, Patient patient) throws ResourceNotFoundException;

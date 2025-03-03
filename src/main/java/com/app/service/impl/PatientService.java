@@ -2,6 +2,7 @@ package com.app.service.impl;
 
 import com.app.dto.PatientAppointmentDTO;
 import com.app.dto.PatientDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Patient;
@@ -24,7 +25,10 @@ public class PatientService implements IPatientService {
     private final IAppointmentRepository appointmentRepository;
 
     @Override
-    public PatientDTO save(Patient patient) {
+    public PatientDTO save(Patient patient) throws DuplicateResourceException {
+        if(patientRepository.existsByDni(patient.getDni())){
+            throw new DuplicateResourceException("A patient with this DNI already exists.");
+        }
         patientRepository.save(patient);
         return this.convertToPatientDTO(patient);
     }
@@ -103,6 +107,7 @@ public class PatientService implements IPatientService {
                 .id(patient.getId())
                 .name(patient.getName())
                 .lastName(patient.getLastName())
+                .dni(patient.getDni())
                 .contact(patient.getContact())
                 .address(patient.getAddress())
                 .appointments(patient.getAppointments().stream()

@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.dto.PatientAppointmentDTO;
 import com.app.dto.PatientDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Patient;
 import com.app.service.interfaces.IPatientService;
@@ -38,7 +39,7 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<PatientDTO> save(@RequestBody Patient patient){
+    public ResponseEntity<PatientDTO> save(@RequestBody Patient patient) throws DuplicateResourceException {
         return ResponseEntity.ok(patientService.save(patient));
     }
 
