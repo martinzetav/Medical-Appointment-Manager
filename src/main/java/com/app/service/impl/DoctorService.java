@@ -1,6 +1,7 @@
 package com.app.service.impl;
 
 import com.app.dto.DoctorAppointmentDTO;
+import com.app.dto.DoctorDTO;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Doctor;
@@ -10,7 +11,7 @@ import com.app.service.interfaces.IDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,27 +25,32 @@ public class DoctorService implements IDoctorService {
     private final IAppointmentRepository appointmentRepository;
 
     @Override
-    public Doctor save(Doctor doctor) {
-        return doctorRepository.save(doctor);
+    public DoctorDTO save(Doctor doctor) {
+        doctorRepository.save(doctor);
+        return this.convertToDoctorDTO(doctor);
     }
 
     @Override
-    public List<Doctor> findAll() {
-        return doctorRepository.findAll();
+    public List<DoctorDTO> findAll() {
+        List<Doctor> doctors = doctorRepository.findAll();
+        return doctors.stream()
+                .map(this::convertToDoctorDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Doctor> findById(Long id) throws ResourceNotFoundException {
+    public Optional<DoctorDTO> findById(Long id) throws ResourceNotFoundException {
         Optional<Doctor> doctor = doctorRepository.findById(id);
         if(doctor.isPresent()){
-            return doctor;
+            DoctorDTO doctorDTO = this.convertToDoctorDTO(doctor.get());
+            return Optional.of(doctorDTO);
         } else {
             throw new ResourceNotFoundException("Doctor with id " + id + " not found");
         }
     }
 
     @Override
-    public Doctor update(Long id, Doctor doctor) throws ResourceNotFoundException {
+    public DoctorDTO update(Long id, Doctor doctor) throws ResourceNotFoundException {
         Optional<Doctor> doctorWanted = doctorRepository.findById(id);
         if(doctorWanted.isPresent()){
             Doctor updatedDoctor = doctorWanted.get();
@@ -54,7 +60,11 @@ public class DoctorService implements IDoctorService {
             updatedDoctor.setContact(doctor.getContact());
             updatedDoctor.setAppointments(doctor.getAppointments());
 
-            return this.save(updatedDoctor);
+            doctorRepository.save(updatedDoctor);
+
+            DoctorDTO doctorDTO = this.convertToDoctorDTO(updatedDoctor);
+
+            return doctorDTO;
         } else {
             throw new ResourceNotFoundException("Doctor with id " + id + " not found");
         }
@@ -62,7 +72,7 @@ public class DoctorService implements IDoctorService {
 
     @Override
     public void delete(Long id) throws ResourceNotFoundException {
-        Doctor doctor = this.findById(id)
+        Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Doctor with id " + id + " not found"));
 
         doctorRepository.deleteById(doctor.getId());
@@ -88,5 +98,26 @@ public class DoctorService implements IDoctorService {
         } else {
             throw new ResourceNotFoundException("Doctor with id " + id + " not found");
         }
+    }
+
+    private DoctorDTO convertToDoctorDTO(Doctor doctor){
+        return DoctorDTO.builder()
+                .id(doctor.getId())
+                .name(doctor.getName())
+                .lastName(doctor.getLastName())
+                .specialty(doctor.getSpecialty())
+                .contact(doctor.getContact())
+                .appointments(doctor.getAppointments().stream()
+                        .map(appointment -> DoctorAppointmentDTO.builder()
+                                .appointmentId(appointment.getId())
+                                .startDate(appointment.getStartDate())
+                                .endDate(appointment.getEndDate())
+                                .patientName(appointment.getPatient().getName())
+                                .patientLastName(appointment.getPatient().getLastName())
+                                .patientEmail(appointment.getPatient().getContact().getEmail())
+                                .build())
+                        .collect(Collectors.toSet()))
+                .build();
+
     }
 }

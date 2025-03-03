@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.dto.DoctorAppointmentDTO;
+import com.app.dto.DoctorDTO;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Doctor;
 import com.app.service.interfaces.IDoctorService;
@@ -20,13 +21,13 @@ public class DoctorController {
     private final IDoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<List<Doctor>> findAll(){
+    public ResponseEntity<List<DoctorDTO>> findAll(){
         return ResponseEntity.ok(doctorService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Doctor> findById(@PathVariable Long id) throws ResourceNotFoundException {
-        Optional<Doctor> requiredDoctor = doctorService.findById(id);
+    public ResponseEntity<DoctorDTO> findById(@PathVariable Long id) throws ResourceNotFoundException {
+        Optional<DoctorDTO> requiredDoctor = doctorService.findById(id);
         ResponseEntity response;
         if(requiredDoctor.isPresent()){
             response = ResponseEntity.ok(requiredDoctor.get());
@@ -37,13 +38,13 @@ public class DoctorController {
     }
 
     @PostMapping
-    public ResponseEntity<Doctor> save(@RequestBody Doctor doctor){
+    public ResponseEntity<DoctorDTO> save(@RequestBody Doctor doctor){
         return ResponseEntity.ok(doctorService.save(doctor));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Doctor> update(@PathVariable Long id, @RequestBody Doctor doctor) throws ResourceNotFoundException {
-        Optional<Doctor> requiredDoctor = doctorService.findById(id);
+    public ResponseEntity<DoctorDTO> update(@PathVariable Long id, @RequestBody Doctor doctor) throws ResourceNotFoundException {
+        Optional<DoctorDTO> requiredDoctor = doctorService.findById(id);
         ResponseEntity response;
         if(requiredDoctor.isPresent()){
             response = ResponseEntity.ok(doctorService.update(id, doctor));
