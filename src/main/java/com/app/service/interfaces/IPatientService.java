@@ -17,4 +17,5 @@ public interface IPatientService {
     PatientDTO update(Long id, Patient patient) throws ResourceNotFoundException;
     void delete(Long id) throws ResourceNotFoundException;
     Set<PatientAppointmentDTO> findAppointmentsByPatientId(Long id) throws ResourceNotFoundException;
+    Optional<PatientDTO> findPatientByDni(String dni) throws ResourceNotFoundException;
 }

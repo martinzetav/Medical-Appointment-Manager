@@ -66,4 +66,16 @@ public class PatientController {
         return ResponseEntity.ok(patientService.findAppointmentsByPatientId(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<PatientDTO> findPatientByDni(@RequestParam String dni) throws ResourceNotFoundException {
+        Optional<PatientDTO> requiredPatient = patientService.findPatientByDni(dni);
+        ResponseEntity<PatientDTO> response;
+        if(requiredPatient.isPresent()){
+            response = ResponseEntity.ok(requiredPatient.get());
+        } else {
+            response = ResponseEntity.notFound().build();
+        }
+        return response;
+    }
+
 }

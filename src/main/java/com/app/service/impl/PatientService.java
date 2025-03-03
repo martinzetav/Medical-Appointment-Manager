@@ -102,6 +102,17 @@ public class PatientService implements IPatientService {
         }
     }
 
+    @Override
+    public Optional<PatientDTO> findPatientByDni(String dni) throws ResourceNotFoundException {
+        Optional<Patient> patient = patientRepository.findPatientByDni(dni);
+        if(patient.isPresent()){
+            PatientDTO patientDTO = this.convertToPatientDTO(patient.get());
+            return Optional.of((patientDTO));
+        } else {
+            throw new ResourceNotFoundException("Patient with DNI " + dni + " not found.");
+        }
+    }
+
     private PatientDTO convertToPatientDTO(Patient patient){
         return PatientDTO.builder()
                 .id(patient.getId())
