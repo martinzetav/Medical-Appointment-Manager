@@ -87,7 +87,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
     public RegisterUserDTO signUpUser(RegisterUserDTO userRequest) {
-        Role role = this.roleService.findByRoleEnum(RoleEnum.USER); // rol por defecto
+        Role role = this.roleService.findByRoleEnum(userRequest.role());
 
         UserEntity user = UserEntity.builder()
                 .username(userRequest.username())
@@ -104,7 +104,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
         RegisterUserDTO responseDTO = new RegisterUserDTO(
                 userCreated.getUsername(),
                 userCreated.getEmail(),
-                this.passwordEncoder.encode(userCreated.getPassword())
+                this.passwordEncoder.encode(userCreated.getPassword()),
+                userCreated.getRole().getRoleEnum()
         );
 
         return responseDTO;
