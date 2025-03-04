@@ -62,7 +62,7 @@ public class MedicalAppointmentManagerApplication {
 
 			Role roleUser = Role.builder()
 					.roleEnum(RoleEnum.USER)
-					.permissionList(Set.of(createPermission, readPermission))
+					.permissionList(Set.of(readPermission))
 					.build();
 
 			roleRepository.saveAll(List.of(roleAdmin, roleSecretary, roleDoctor, roleUser));
