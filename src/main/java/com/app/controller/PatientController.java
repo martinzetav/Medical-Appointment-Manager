@@ -9,6 +9,8 @@ import com.app.service.interfaces.IPatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,22 +30,30 @@ public class PatientController {
         return ResponseEntity.ok(patientService.findAll());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY', 'ROLE_USER')")
     public ResponseEntity<PatientDTO> findById(@PathVariable Long id) throws ResourceNotFoundException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        boolean isAdminOrSecretary = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_SECRETARY"));
+
         Optional<PatientDTO> requiredPatient = patientService.findById(id);
-        ResponseEntity<PatientDTO> response;
-        if(requiredPatient.isPresent()){
-            response = ResponseEntity.ok(requiredPatient.get());
-        } else {
-            response = ResponseEntity.notFound().build();
+
+        if(isAdminOrSecretary){
+            return ResponseEntity.ok(requiredPatient.get());
         }
-        return response;
+
+        if (requiredPatient.isEmpty() || !requiredPatient.get().getDni().equals(currentUsername)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(requiredPatient.get());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
     @PostMapping
-    public ResponseEntity<PatientDTO> save(@RequestBody Patient patient) throws DuplicateResourceException {
+    public ResponseEntity<PatientDTO> save(@RequestBody Patient patient) throws DuplicateResourceException, ResourceNotFoundException {
         return ResponseEntity.ok(patientService.save(patient));
     }
 
