@@ -80,6 +80,19 @@ public class PatientController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY', 'ROLE_USER')")
     @GetMapping("/{id}/appointments")
     public ResponseEntity<Set<PatientAppointmentDTO>> findAppointmentsByPatientId(@PathVariable Long id) throws ResourceNotFoundException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        boolean isAdminOrSecretary = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_SECRETARY"));
+        Optional<PatientDTO> requiredPatient = patientService.findById(id);
+
+        if(isAdminOrSecretary){
+            return ResponseEntity.ok(patientService.findAppointmentsByPatientId(id));
+        }
+
+        if (requiredPatient.isEmpty() || !requiredPatient.get().getDni().equals(currentUsername)) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(patientService.findAppointmentsByPatientId(id));
     }
 
