@@ -6,8 +6,10 @@ import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Patient;
+import com.app.model.UserEntity;
 import com.app.repository.IAppointmentRepository;
 import com.app.repository.IPatientRepository;
+import com.app.repository.IUserRepository;
 import com.app.service.interfaces.IPatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,12 +25,17 @@ public class PatientService implements IPatientService {
 
     private final IPatientRepository patientRepository;
     private final IAppointmentRepository appointmentRepository;
+    private final IUserRepository userRepository;
 
     @Override
-    public PatientDTO save(Patient patient) throws DuplicateResourceException {
+    public PatientDTO save(Patient patient) throws DuplicateResourceException, ResourceNotFoundException {
         if(patientRepository.existsByDni(patient.getDni())){
             throw new DuplicateResourceException("A patient with this DNI already exists.");
         }
+
+        UserEntity user = userRepository.findUserEntityByUsername(patient.getDni())
+                        .orElseThrow(() -> new ResourceNotFoundException("No registered user found with the provided DNI."));
+
         patientRepository.save(patient);
         return this.convertToPatientDTO(patient);
     }

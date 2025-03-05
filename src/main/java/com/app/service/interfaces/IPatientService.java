@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface IPatientService {
-    PatientDTO save(Patient patient) throws DuplicateResourceException;
+    PatientDTO save(Patient patient) throws DuplicateResourceException, ResourceNotFoundException;
     List<PatientDTO> findAll();
     Optional<PatientDTO> findById(Long id) throws ResourceNotFoundException;
     PatientDTO update(Long id, Patient patient) throws ResourceNotFoundException;
