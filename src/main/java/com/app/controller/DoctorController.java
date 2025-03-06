@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.dto.DoctorAppointmentDTO;
 import com.app.dto.DoctorDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Doctor;
 import com.app.service.interfaces.IDoctorService;
@@ -52,7 +53,7 @@ public class DoctorController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
     @PostMapping
-    public ResponseEntity<DoctorDTO> save(@RequestBody Doctor doctor){
+    public ResponseEntity<DoctorDTO> save(@RequestBody Doctor doctor) throws ResourceNotFoundException, DuplicateResourceException {
         return ResponseEntity.ok(doctorService.save(doctor));
     }
 

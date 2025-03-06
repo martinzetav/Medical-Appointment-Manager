@@ -2,11 +2,14 @@ package com.app.service.impl;
 
 import com.app.dto.DoctorAppointmentDTO;
 import com.app.dto.DoctorDTO;
+import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Doctor;
+import com.app.model.UserEntity;
 import com.app.repository.IAppointmentRepository;
 import com.app.repository.IDoctorRepository;
+import com.app.repository.IUserRepository;
 import com.app.service.interfaces.IDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,9 +25,17 @@ public class DoctorService implements IDoctorService {
 
     private final IDoctorRepository doctorRepository;
     private final IAppointmentRepository appointmentRepository;
+    private final IUserRepository userRepository;
 
     @Override
-    public DoctorDTO save(Doctor doctor) {
+    public DoctorDTO save(Doctor doctor) throws DuplicateResourceException, ResourceNotFoundException {
+        if(doctorRepository.existsByDni(doctor.getDni())){
+            throw new DuplicateResourceException("A Doctor with this DNI already exists.");
+        }
+
+        UserEntity user = userRepository.findUserEntityByUsername(doctor.getDni())
+                .orElseThrow(() -> new ResourceNotFoundException("No registered user found with the provided DNI."));
+
         doctorRepository.save(doctor);
         return this.convertToDoctorDTO(doctor);
     }
