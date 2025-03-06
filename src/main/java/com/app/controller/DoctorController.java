@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.dto.DoctorAppointmentDTO;
 import com.app.dto.DoctorDTO;
+import com.app.dto.PatientDTO;
 import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Doctor;
@@ -80,7 +81,21 @@ public class DoctorController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY', 'ROLE_DOCTOR')")
     @GetMapping("/{id}/appointments")
     public ResponseEntity<Set<DoctorAppointmentDTO>> findAppointmentsByDoctorId(@PathVariable Long id) throws ResourceNotFoundException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        boolean isAdminOrSecretary = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_SECRETARY"));
+        Optional<DoctorDTO> requiredDoctor = doctorService.findById(id);
+
+        if(isAdminOrSecretary){
+            return ResponseEntity.ok(doctorService.findAppointmentsByDoctorId(id));
+        }
+
+        if (requiredDoctor.isEmpty() || !requiredDoctor.get().getDni().equals(currentUsername)) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(doctorService.findAppointmentsByDoctorId(id));
+
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
