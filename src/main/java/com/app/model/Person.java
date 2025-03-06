@@ -15,4 +15,6 @@ public abstract class Person {
     private String name;
     @Column(name = "last_name")
     private String lastName;
+    @Column(unique = true, nullable = false, length = 8)
+    private String dni;
 }

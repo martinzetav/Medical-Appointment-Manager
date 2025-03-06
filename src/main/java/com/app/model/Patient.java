@@ -14,8 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "patients")
 public class Patient extends Person {
-    @Column(unique = true, nullable = false, length = 8)
-    private String dni;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "contact_id", referencedColumnName = "id")
     private Contact contact;
