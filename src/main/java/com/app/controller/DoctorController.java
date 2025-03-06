@@ -8,6 +8,8 @@ import com.app.service.interfaces.IDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,17 +29,25 @@ public class DoctorController {
         return ResponseEntity.ok(doctorService.findAll());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY', 'ROLE_DOCTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<DoctorDTO> findById(@PathVariable Long id) throws ResourceNotFoundException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        boolean isAdminOrSecretary = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_SECRETARY"));
+
         Optional<DoctorDTO> requiredDoctor = doctorService.findById(id);
-        ResponseEntity response;
-        if(requiredDoctor.isPresent()){
-            response = ResponseEntity.ok(requiredDoctor.get());
-        } else {
-            response = ResponseEntity.notFound().build();
+
+        if(isAdminOrSecretary){
+            return ResponseEntity.ok(requiredDoctor.get());
         }
-        return response;
+
+        if (requiredDoctor.isEmpty() || !requiredDoctor.get().getDni().equals(currentUsername)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(requiredDoctor.get());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
