@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findDoctorBySpecialty(String specialty);
+    boolean existsByDni(String dni);
 }
