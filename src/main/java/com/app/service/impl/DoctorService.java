@@ -113,6 +113,7 @@ public class DoctorService implements IDoctorService {
                 .id(doctor.getId())
                 .name(doctor.getName())
                 .lastName(doctor.getLastName())
+                .dni(doctor.getDni())
                 .specialty(doctor.getSpecialty())
                 .contact(doctor.getContact())
                 .appointments(doctor.getAppointments().stream()
