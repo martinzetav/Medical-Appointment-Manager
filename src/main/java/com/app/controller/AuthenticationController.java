@@ -7,6 +7,7 @@ import com.app.service.impl.UserDetailServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(this.userDetailService.loginUser(userRequest));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/signup")
     public ResponseEntity<RegisterUserDTO> register(@RequestBody @Valid RegisterUserDTO userRequest) {
         return ResponseEntity.ok(this.userDetailService.signUpUser(userRequest));
