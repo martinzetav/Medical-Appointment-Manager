@@ -2,11 +2,12 @@ package com.app.controller;
 
 import com.app.dto.DoctorAppointmentDTO;
 import com.app.dto.DoctorDTO;
-import com.app.dto.PatientDTO;
 import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Doctor;
 import com.app.service.interfaces.IDoctorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/doctors")
 @RequiredArgsConstructor
+@Tag(name = "Doctors", description = "Controller for Doctors")
 public class DoctorController {
 
     private final IDoctorService doctorService;
@@ -80,6 +82,7 @@ public class DoctorController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY', 'ROLE_DOCTOR')")
     @GetMapping("/{id}/appointments")
+    @Operation(summary = "Retrieve all appointments for a specific doctor by their ID.")
     public ResponseEntity<Set<DoctorAppointmentDTO>> findAppointmentsByDoctorId(@PathVariable Long id) throws ResourceNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
@@ -100,6 +103,7 @@ public class DoctorController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
     @GetMapping("/search")
+    @Operation(summary = "Retrieve all doctors based on their specialty.")
     public ResponseEntity<List<DoctorDTO>> findDoctorBySpecialty(@RequestParam String specialty){
         return ResponseEntity.ok(doctorService.findDoctorBySpecialty(specialty));
     }

@@ -6,6 +6,8 @@ import com.app.exception.DuplicateResourceException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Patient;
 import com.app.service.interfaces.IPatientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/patients")
 @RequiredArgsConstructor
+@Tag(name = "Patients", description = "Controller for Patients")
 public class PatientController {
 
     private final IPatientService patientService;
@@ -79,6 +82,7 @@ public class PatientController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY', 'ROLE_USER')")
     @GetMapping("/{id}/appointments")
+    @Operation(summary = "Retrieve all appointments for a specific patient by their ID.")
     public ResponseEntity<Set<PatientAppointmentDTO>> findAppointmentsByPatientId(@PathVariable Long id) throws ResourceNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
@@ -98,6 +102,7 @@ public class PatientController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
     @GetMapping("/search")
+    @Operation(summary = "Retrieve a patient based on their DNI.")
     public ResponseEntity<PatientDTO> findPatientByDni(@RequestParam String dni) throws ResourceNotFoundException {
         Optional<PatientDTO> requiredPatient = patientService.findPatientByDni(dni);
         ResponseEntity<PatientDTO> response;

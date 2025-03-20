@@ -4,6 +4,7 @@ import com.app.dto.AuthLoginRequestDTO;
 import com.app.dto.AuthResponseDTO;
 import com.app.dto.RegisterUserDTO;
 import com.app.service.impl.UserDetailServiceImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Controller for Authentication")
 public class AuthenticationController {
 
     private final UserDetailServiceImpl userDetailService;
