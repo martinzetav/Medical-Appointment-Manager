@@ -18,4 +18,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<String> processInvalidDateException(InvalidDateException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 }
