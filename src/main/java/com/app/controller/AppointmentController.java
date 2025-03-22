@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.dto.AppointmentDTO;
 import com.app.exception.DuplicateResourceException;
+import com.app.exception.InvalidDateException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.service.interfaces.IAppointmentService;
@@ -59,5 +60,12 @@ public class AppointmentController {
     public ResponseEntity<String> delete(@PathVariable Long id) throws ResourceNotFoundException {
         appointmentService.delete(id);
         return ResponseEntity.ok("Appointment with id " + id + " successfully removed.");
+    }
+
+    @GetMapping("/day")
+    public ResponseEntity<List<AppointmentDTO>> findAppointmentsForDay(@RequestParam int year,
+                                                                       @RequestParam int month,
+                                                                       @RequestParam int day) throws InvalidDateException {
+        return ResponseEntity.ok(appointmentService.findAppointmentsForDay(year, month, day));
     }
 }

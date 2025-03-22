@@ -4,6 +4,7 @@ import com.app.dto.AppointmentDTO;
 import com.app.dto.DoctorDTO;
 import com.app.dto.PatientDTO;
 import com.app.exception.DuplicateResourceException;
+import com.app.exception.InvalidDateException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.model.Appointment;
 import com.app.model.Doctor;
@@ -15,6 +16,8 @@ import com.app.service.interfaces.IPatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,6 +110,17 @@ public class AppointmentService implements IAppointmentService {
                 .orElseThrow(()-> new ResourceNotFoundException("Appointment with id " + id + " not found"));
 
         appointmentRepository.deleteById(appointment.getId());
+    }
+
+    public List<AppointmentDTO> findAppointmentsForDay(int year, int month, int day) throws InvalidDateException {
+        if(month < 1 || month > 12) throw new InvalidDateException("The month provided is not valid");
+        if(day < 1 || day > YearMonth.of(year, month).lengthOfMonth()) throw new InvalidDateException("the day provided is not valid");
+        LocalDateTime startOfDay = LocalDateTime.of(year, month, day, 0, 0);
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+        List<Appointment> appointments = appointmentRepository.findByStartDateBetween(startOfDay, endOfDay);
+        return appointments.stream()
+                .map(this::convertToAppointmentDTO)
+                .collect(Collectors.toList());
     }
 
     private AppointmentDTO convertToAppointmentDTO(Appointment appointment){
