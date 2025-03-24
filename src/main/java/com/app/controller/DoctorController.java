@@ -101,7 +101,7 @@ public class DoctorController {
 
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SECRETARY, ROLE_USER')")
     @GetMapping("/search")
     @Operation(summary = "Retrieve all doctors based on their specialty.")
     public ResponseEntity<List<DoctorDTO>> findDoctorBySpecialty(@RequestParam String specialty){
